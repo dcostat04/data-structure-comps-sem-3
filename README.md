@@ -9,5 +9,6 @@
 # 2.2) circular linked list
 # 2.3) stack using linked list
 # 2.4) queue using linked list
+# 3.1) Implementation Of Binary Search Tree
 
 # Any doubts email me @dcostat4@gmail.com
