@@ -1,0 +1,289 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+struct node {
+
+    int data;
+    struct node *left;
+    struct node *right;
+
+};
+
+void preOrder( struct node *tree) {
+
+	if( tree != NULL )
+    {
+	printf("%d ",tree->data);
+	preOrder(tree->left);
+	preOrder(tree->right);
+    }
+}
+void postOrder( struct node *tree) {
+
+	if( tree!= NULL )
+    {
+	postOrder(tree->left);
+	postOrder(tree->right);
+	printf("%d ",tree->data);
+	}
+
+}
+void inOrder( struct node *tree) {
+
+	if( tree != NULL )
+     {
+	inOrder(tree->left);
+	printf("%d ",tree->data);
+	inOrder(tree->right);
+     }
+}
+
+int totalnodes(struct node *tree)
+{
+    if(tree==NULL)
+        return 0;
+    else
+        return (totalnodes(tree->left)+ totalnodes(tree->right) +1);
+}
+int totalexternalnodes(struct node *tree)
+{
+    if(tree==NULL)
+        return 0;
+    else if((tree->left=NULL)&&(tree->right=NULL))
+        return 1;
+    else
+        return (totalexternalnodes(tree->left)+ totalexternalnodes(tree->right) );
+}
+int totalinternalnodes(struct node *tree)
+{
+    if((tree==NULL)||(tree->left=NULL)&&(tree->right=NULL))
+        return 0;
+    else
+        return (totalinternalnodes(tree->left)+ totalinternalnodes(tree->right) +1);
+}
+int height(struct node *tree)
+{
+    int leftheight,rightheight;
+    if (tree==NULL)
+        return -1;
+    else
+    {
+        leftheight=height(tree->left);
+        rightheight=height(tree->right);
+        if(leftheight>rightheight)
+            return(leftheight+1);
+        else
+            return(rightheight+1);
+    }
+
+}
+struct node* insert( struct node* tree, int data ) {
+
+struct node *ptr, *nodeptr, *parentptr;
+ptr=(struct node*)malloc(sizeof(struct node));
+ptr->data=data;
+ptr->left=NULL;
+ptr->right=NULL;
+if(tree==NULL)
+{
+    tree=ptr;
+    tree->left=NULL;
+    tree->right=NULL;
+}
+else {
+parentptr=NULL;
+nodeptr=tree;
+while(nodeptr!=NULL)
+{
+    parentptr=nodeptr;
+    if(data<nodeptr->data)
+    nodeptr=nodeptr->left;
+    else {
+    nodeptr=nodeptr->right;
+    }
+}
+if(data<parentptr->data)
+parentptr->left=ptr;
+else {
+parentptr->right=ptr;
+}
+}
+return(tree);
+}
+
+struct node *findsmallest(struct node *tree)
+{
+  if ((tree == NULL)|| (tree->left== NULL))
+    return (tree);
+  else
+    return findsmallest(tree->left);
+}
+struct node *findlargest(struct node *tree)
+{
+  if ((tree == NULL)|| (tree->right== NULL))
+    return (tree);
+  else
+    return findlargest(tree->right);
+}
+
+struct node *deletetree(struct node *tree)
+{
+   if (tree!=NULL)
+   {
+       deletetree(tree->left);
+       deletetree(tree->right);
+       free(tree);
+   }
+}
+struct node *deleteelement(struct node *tree, int data)
+{   struct node *cur,*parent,*temp;
+  cur=tree;
+  while(cur!=NULL && data!=cur->data)
+    {
+    parent = cur;
+    cur=(data<cur->data)?cur->left:cur->right;
+    }
+    if(cur == NULL)
+    {
+    printf("\n The value to be deleted is not present in the tree");
+    return(tree);
+    }
+
+
+  else if(cur->left==NULL && cur->right==NULL) //NODE WITH NO CHILDREN
+  {
+
+    if(parent->left==cur)
+    {
+        parent->left=NULL;
+
+    }
+    else
+    {
+      parent->right=NULL;
+    }
+    free(cur);
+
+  }
+  else if(cur->left==NULL || cur->right==NULL)//NODE WITH 1 CHILD
+  {
+    if(cur->left==NULL)
+    {
+      if(parent->right==cur)
+      {
+        parent->right=cur->right;
+      }
+      else
+      {
+        parent->left=cur->right;
+
+      }
+      free(cur);
+    }
+    else
+    {
+      if(parent->right==cur)
+      {
+        parent->right=cur->left;
+
+      }
+      else
+      {
+        parent->left=cur->left;
+
+      }
+      free(cur);
+    }
+
+  }
+  else //NODE WITH 2 CHILD
+  {
+    int newt;
+    temp=findlargest(cur->left);
+    newt=temp->data;
+    tree=deleteelement(tree,newt);
+    cur->data=newt;
+
+  }
+  return tree;
+}
+int main()
+{
+    int option,data;
+    struct node *ptr;
+      struct node* tree = NULL;
+    do
+    {
+        printf("\n*****MAIN MENU****\n");
+        printf("1.Insert\n");
+        printf("2.Preorder traversal\n");
+        printf("3.Inorder traversal\n");
+        printf("4.Postorder traversal\n");
+        printf("5.Find smallest element\n");
+        printf("6.Find largest element\n");
+        printf("7.Delete an element\n");
+        printf("8.Count total nodes\n");
+        printf("9.Count total external nodes\n");
+        printf("10.Count total internal nodes\n");
+        printf("11.Determine height of tree\n");
+        printf("12.Delete the Tree\n");
+        printf("13.Exit\n");
+        printf("Enter Your Option\n");
+        scanf("%d",&option);
+        switch(option)
+        {
+        case 1:
+            printf("\n Enter Value of the node:\n ");
+            scanf("%d",&data);
+            tree=insert(tree,data);
+            break;
+        case 2:
+            printf("\n The element of the tree are:\n");
+            preOrder(tree);
+            break;
+        case 3:
+            printf("\n The element of the tree are:\n");
+            inOrder(tree);
+            break;
+        case 4:
+            printf("\n The element of the tree are:\n");
+            postOrder(tree);
+            break;
+        case 5:
+            ptr=findsmallest(tree);
+            printf("Smallest element: %d \n",ptr->data);
+            break;
+        case 6:
+            ptr=findlargest(tree);
+            printf("Largest element: %d \n",ptr->data);
+            break;
+        case 7:
+            printf("enter element to be deleted \n");
+            scanf("%d",&data);
+            tree=deleteelement(tree,data);
+            break;
+        case 8:
+            printf("Total nodes= %d\n",totalnodes(tree));
+            break;
+        case 9:
+            printf("Total External nodes= %d\n",totalexternalnodes(tree));
+            break;
+        case 10:
+            printf("Total Internal nodes= %d\n",totalinternalnodes(tree));
+            break;
+        case 11:
+            printf("Height of the Tree= %d\n",height(tree));
+            break;
+        case 12:
+            tree= deletetree(tree);
+            printf("tree deleted \n");
+            break;
+
+        }
+    }while(option!=13);
+    getch();
+    return 0;
+}
+
